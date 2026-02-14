@@ -3,8 +3,55 @@ import json
 import requests
 from datetime import datetime
 import os
+import subprocess
 
 URLS_FILE = "urls.json"
+
+def git_commit_push():
+    """Commit et push le fichier urls.json vers GitHub."""
+    try:
+        # On vérifie si on est dans un dépôt Git
+        if not os.path.exists(".git"):
+            st.warning("⚠️ Pas un dépôt Git. Sauvegarde locale uniquement.")
+            return
+
+        # Configuration de l'utilisateur pour le commit
+        subprocess.run(["git", "config", "--local", "user.email", "action@github.com"], check=True)
+        subprocess.run(["git", "config", "--local", "user.name", "Streamlit App"], check=True)
+
+        # Ajout et commit
+        subprocess.run(["git", "add", URLS_FILE], check=True)
+        commit_msg = f"Update via UI: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+
+        # On vérifie s'il y a des changements avant de commit
+        status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout
+        if not status:
+            return
+
+        subprocess.run(["git", "commit", "-m", commit_msg], check=True)
+
+        # On récupère les dernières modifications de GitHub pour éviter les conflits
+        subprocess.run(["git", "pull", "--rebase", "origin", "main"], check=True)
+
+        # Tentative de push avec gestion du Token
+        # Si un token est configuré dans les secrets Streamlit, on l'utilise
+        github_token = st.secrets.get("GH_TOKEN")
+        if github_token:
+            # On récupère l'URL du remote actuel
+            remote_url = subprocess.run(["git", "remote", "get-url", "origin"], capture_output=True, text=True).stdout.strip()
+            # On insère le token dans l'URL (format: https://token@github.com/user/repo.git)
+            if "github.com" in remote_url and "@" not in remote_url:
+                new_remote_url = remote_url.replace("https://", f"https://{github_token}@")
+                subprocess.run(["git", "remote", "set-url", "origin", new_remote_url], check=True)
+
+        result = subprocess.run(["git", "push"], capture_output=True, text=True)
+        if result.returncode == 0:
+            st.toast("✅ Synchronisé avec GitHub !")
+        else:
+            st.error(f"Erreur de synchronisation : {result.stderr}")
+            st.info("💡 Avez-vous configuré le GH_TOKEN dans les secrets Streamlit ?")
+    except Exception as e:
+        st.error(f"Erreur Git : {e}")
 
 def load_urls():
     if os.path.exists(URLS_FILE):
@@ -15,9 +62,11 @@ def load_urls():
             return []
     return []
 
-def save_urls(urls):
+def save_urls(urls, sync=True):
     with open(URLS_FILE, "w") as f:
         json.dump(urls, f, indent=4)
+    if sync:
+        git_commit_push()
 
 st.set_page_config(page_title="HuggingFace AutoPing", page_icon="🚀")
 
@@ -40,6 +89,7 @@ with st.sidebar:
             })
             save_urls(st.session_state.urls)
             st.success("Ajouté !")
+            st.rerun()
         else:
             st.warning("URL vide ou déjà présente.")
 

@@ -12,13 +12,16 @@ Un outil simple pour maintenir vos Hugging Face Spaces (et autres web apps) acti
 - Créez un nouveau dépôt sur votre compte GitHub.
 - Envoyez tous les fichiers de ce dossier sur le dépôt.
 
-### Étape 2 : Configurer les Permissions (CRUCIAL) ⚠️
-Pour que l'automatisme puisse mettre à jour les statuts dans l'interface, il doit avoir le droit d'écrire sur votre dépôt :
-1. Sur votre dépôt GitHub, allez dans **Settings**.
-2. Dans le menu de gauche, cliquez sur **Actions** > **General**.
-3. Faites défiler jusqu'à **Workflow permissions**.
-4. Sélectionnez **"Read and write permissions"**.
-5. Cliquez sur **Save**.
+### Étape 2 : Configurer les Permissions & Secrets (CRUCIAL) ⚠️
+
+1. **Permissions du Workflow** :
+   - Sur votre dépôt GitHub, allez dans **Settings** > **Actions** > **General**.
+   - Sélectionnez **"Read and write permissions"** et cliquez sur **Save**.
+
+2. **Accès depuis l'Interface (Persistance des liens)** :
+   - Pour que vos liens ne disparaissent pas, l'interface doit pouvoir enregistrer les changements sur GitHub.
+   - Créez un **Personal Access Token (classic)** sur GitHub avec le scope **`repo`**.
+   - Sur votre plateforme d'hébergement (Streamlit Cloud ou HF Spaces), ajoutez un secret nommé **`GH_TOKEN`** contenant votre token.
 
 ### Étape 3 : Héberger l'Interface
 - Allez sur [Streamlit Cloud](https://share.streamlit.io/) ou créez un nouveau Space sur Hugging Face (type Streamlit).
