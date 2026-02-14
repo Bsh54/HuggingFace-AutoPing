@@ -1,4 +1,4 @@
-# 🚀 HF Space Relancer
+# 🚀 HuggingFace AutoPing
 
 Un outil simple pour maintenir vos Hugging Face Spaces (et autres web apps) actifs 24h/24 gratuitement.
 

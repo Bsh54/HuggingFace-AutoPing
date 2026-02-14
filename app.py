@@ -19,10 +19,10 @@ def save_urls(urls):
     with open(URLS_FILE, "w") as f:
         json.dump(urls, f, indent=4)
 
-st.set_page_config(page_title="HF Space Relancer", page_icon="🚀")
+st.set_page_config(page_title="HuggingFace AutoPing", page_icon="🚀")
 
-st.title("🚀 HF Space Relancer")
-st.write("Maintenez vos Spaces actifs gratuitement.")
+st.title("🚀 HuggingFace AutoPing")
+st.write("Maintenez vos Spaces actifs gratuitement 24h/24.")
 
 # --- Gestion des URLs ---
 if "urls" not in st.session_state:
