@@ -13,5 +13,10 @@
         "url": "https://shads229-zenith-ai.hf.space",
         "last_ping": "20/02 00:33",
         "status": "OK (200)"
+    },
+    {
+        "url": "https://shads229-voxiai.hf.space",
+        "last_ping": "Jamais",
+        "status": "Inconnu"
     }
 ]
